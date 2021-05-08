@@ -190,7 +190,7 @@ export default {
     const address = this.$route.params.address;
     this.value = address;
     axios
-      .get("http://185.137.233.120:3234/getData/" + address)
+      .get("/getData/" + address)
       .then((response) => {
         return response.data;
       })
