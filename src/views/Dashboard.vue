@@ -186,37 +186,13 @@ export default {
       },
     };
   },
+  watch: {
+    $route() {
+      this.updateCharts();
+    },
+  },
   mounted() {
-    const address = this.$route.params.address;
-    this.value = address;
-    axios
-      .get("/getData/" + address)
-      .then((response) => {
-        return response.data;
-      })
-      .then((data) => {
-        const { all, receive, outgoing, uniqAddresses } = data;
-        this.$refs.chart1.updateSeries([
-          {
-            data: this.dataToValue(all),
-          },
-        ]);
-        this.$refs.chart2.updateSeries([
-          {
-            data: this.dataToValue(receive),
-          },
-        ]);
-        this.$refs.chart3.updateSeries([
-          {
-            data: this.dataToValue(outgoing),
-          },
-        ]);
-        this.$refs.chart4.updateSeries([
-          {
-            data: this.dataToValue(uniqAddresses),
-          },
-        ]);
-      });
+    this.updateCharts();
   },
   methods: {
     dataToValue(data) {
@@ -231,6 +207,38 @@ export default {
       if (!/^[A-Z0-9]{32}$/.test(v)) return alert("Incorrect address");
 
       this.$router.push({ name: "Dashboard", params: { address: v } });
+    },
+    updateCharts() {
+      const address = this.$route.params.address;
+      this.value = address;
+      axios
+        .get("/getData/" + address)
+        .then((response) => {
+          return response.data;
+        })
+        .then((data) => {
+          const { all, receive, outgoing, uniqAddresses } = data;
+          this.$refs.chart1.updateSeries([
+            {
+              data: this.dataToValue(all),
+            },
+          ]);
+          this.$refs.chart2.updateSeries([
+            {
+              data: this.dataToValue(receive),
+            },
+          ]);
+          this.$refs.chart3.updateSeries([
+            {
+              data: this.dataToValue(outgoing),
+            },
+          ]);
+          this.$refs.chart4.updateSeries([
+            {
+              data: this.dataToValue(uniqAddresses),
+            },
+          ]);
+        });
     },
   },
 };
