@@ -21,7 +21,12 @@
         </div>
       </a-col>
     </a-row>
-    <a-row :gutter="24">
+    <div style="margin: 24px 0; padding: 18px" v-show="!loaded">
+      <LoadingOutlined
+        style="font-size: 36px; color: #5990dc; font-weight: bold"
+      />
+    </div>
+    <a-row :gutter="24" v-show="loaded">
       <a-col :md="12" :xs="24" style="margin-top: 24px">
         <div class="box">
           <div class="boxTitle">All transactions</div>
@@ -74,21 +79,32 @@
           ></apexchart>
         </div>
       </a-col>
+      <a-col :span="24" style="margin: 30px 0 24px">
+        Ideas and suggestions:
+        <a href="https://t.me/xjenek" target="_blank">Telegram</a> or Discord:
+        xJeneK#3181 <br />
+        Donate for development:
+        <a href="obyte:W7UTUEDCATSMB7SZ6ZH763MAXMFSUBQB"
+          >W7UTUEDCATSMB7SZ6ZH763MAXMFSUBQB</a
+        ></a-col
+      >
     </a-row>
   </div>
 </template>
 
 <script>
 const axios = require("axios");
-import { SearchOutlined } from "@ant-design/icons-vue";
+import { SearchOutlined, LoadingOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "Home",
   components: {
     SearchOutlined,
+    LoadingOutlined,
   },
   data: function () {
     return {
+      loaded: false,
       value: "",
       series1: [
         {
@@ -209,11 +225,13 @@ export default {
       this.$router.push({ name: "Dashboard", params: { address: v } });
     },
     updateCharts() {
+      this.loaded = false;
       const address = this.$route.params.address;
       this.value = address;
       axios
         .get("/getData/" + address)
         .then((response) => {
+          this.loaded = true;
           return response.data;
         })
         .then((data) => {
